@@ -8,6 +8,7 @@ module.exports = {
   },
 
   publicPath: process.env.publicPath || './',
+
   productionSourceMap: false,
 
   css: {
