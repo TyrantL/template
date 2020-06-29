@@ -22,97 +22,93 @@
 </template>
 
 <script>
-  import { Popup, Grid, GridItem } from "vant";
-
   /**
    * enum
    */
-  const ASSETS_BASE = "https://static.zmjx.com/fe/images/free-order";
+  const ASSETS_BASE = 'https://static.zmjx.com/fe/images/free-order';
 
   /**
    * core module
    */
   export default {
-    name: "share",
+    name: 'share',
     props: {
       value: {
         type: Boolean,
-        default: false
+        default: false,
       },
       config: {
         type: Object,
         default: () => {
           return {};
-        }
-      }
+        },
+      },
     },
 
     computed: {
       cancelText() {
         const { cancelText } = this.config;
-        return cancelText || "取消";
+        return cancelText || '取消';
       },
       iconSize() {
         const { iconSize } = this.config;
-        return iconSize || "45";
+        return iconSize || '45';
       },
       popupStyle() {
-        return { paddingTop: "0.05rem" };
+        return { paddingTop: '0.05rem' };
       },
       gutter() {
         const { gutter } = this.config;
-        return gutter || "0";
+        return gutter || '0';
       },
       popupClass() {
         const { fontSize } = this.config;
         if (fontSize) {
-          return "spacex-share-popup spacex-share-popup-auto-font-size";
-        } else {
-          return "spacex-share-popup";
+          return 'spacex-share-popup spacex-share-popup-auto-font-size';
         }
+        return 'spacex-share-popup';
       },
       gridItemStyle() {
         const { fontSize } = this.config;
         if (fontSize) {
-          return { fontSize: fontSize/100 + "rem" };
-        }else{
-          return {}
+          return { fontSize: `${fontSize / 100}rem` };
         }
-      }
+        return {};
+      },
     },
     data() {
-      const types = this.config.types;
-      const custom = this.config.custom;
+      const { types } = this.config;
+      const { custom } = this.config;
       let defaultData = [];
       let _defaultData = [
         {
           icon: `${ASSETS_BASE}/weixin.png`,
-          text: "微信邀请",
+          text: '微信邀请',
           type: 1,
-          fn: this.shareLinkToWxFriend
+          fn: this.shareLinkToWxFriend,
         },
         {
           icon: `${ASSETS_BASE}/pengyouquan.png`,
-          text: "朋友圈邀请",
+          text: '朋友圈邀请',
           type: 2,
-          fn: this.shareLinkToWxMoments
+          fn: this.shareLinkToWxMoments,
         },
         {
           icon: `${ASSETS_BASE}/hiabaoyaoqing.png`,
-          text: "海报邀请",
+          text: '海报邀请',
           type: 3,
-          fn: this.showPoster
+          fn: this.showPoster,
         },
         {
           icon: `${ASSETS_BASE}/mianduimianyaoqing.png`,
-          text: "面对面邀请",
+          text: '面对面邀请',
           type: 4,
-          fn: this.gotoFaceToFaceInvite
-        }
+          fn: this.gotoFaceToFaceInvite,
+        },
       ];
 
       if (custom) {
-        let _arr = [];
+        const _arr = [];
         custom.forEach(item => {
           let flag = 0;
           _defaultData.forEach((subitem, idx) => {
@@ -121,14 +117,14 @@
               _defaultData[idx] = { ...subitem, ...item };
             }
           });
-          if (flag == 0) {
+          if (flag === 0) {
             _arr.push(item);
           }
         });
         _defaultData = _defaultData.concat(_arr);
       }
 
-      if (types && types.length != 0) {
+      if (types && types.length !== 0) {
         _defaultData.forEach(item => {
           if (types.indexOf(item.type) !== -1) {
             defaultData.push(item);
@@ -140,8 +136,8 @@
 
       return {
         visible: false,
-        defaultList: defaultData
-        //len : defaultData.length
+        defaultList: defaultData,
+        // len : defaultData.length
       };
     },
     watch: {
@@ -149,8 +145,8 @@
         this.visible = val;
       },
       visible(val) {
-        this.$emit("input", val);
-      }
+        this.$emit('input', val);
+      },
       // defaultList(val){
       //   this.len = this.defaultList.length;
 
@@ -165,50 +161,49 @@
       },
       _share(cfg) {
         let shareConfig = {
-          picUrl: "https://static.zmjx.com/fe/images/course/share-logo.png",
+          picUrl: 'https://static.zmjx.com/fe/images/course/share-logo.png',
           url: window.location.href,
-          title: "芝麻鲸选",
-          subTitle: "芝麻鲸选"
+          title: '芝麻鲸选',
+          subTitle: '芝麻鲸选',
         };
         shareConfig = { ...shareConfig, ...cfg, ...this.config };
-        window.dsBridge &&
-        window.dsBridge.call("async.shareLinkToWx", shareConfig, function() {});
+        window.dsBridge && window.dsBridge.call('async.shareLinkToWx', shareConfig, function() {});
       },
       shareLinkToWxFriend() {
         this._share({
           sence: 0,
-          scene: 0
+          scene: 0,
         });
       },
       shareLinkToWxMoments() {
         this._share({
           sence: 1,
-          scene: 1
+          scene: 1,
         });
       },
       showPoster() {
         if (this.config.posterType) {
           window.dsBridge.call(
-            this.config.posterType || "",
+            this.config.posterType || '',
             { qrStr: this.config.qrStr },
             function() {}
           );
         }
       },
       gotoFaceToFaceInvite() {
-        window.dsBridge.call("async.pushPage", {
-          url: `zhimajx://faceToFaceInvite`
+        window.dsBridge.call('async.pushPage', {
+          url: `zhimajx://faceToFaceInvite`,
         });
-      }
+      },
     },
     mounted() {
       if (this.value) {
         this.visible = true;
       }
-    }
+    },
   };
 </script>
-<style lang="less" >
+<style lang="less">
   .spacex-share-cancel-btn {
     height: 60px;
     line-height: 60px;

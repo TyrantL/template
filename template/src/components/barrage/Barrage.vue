@@ -1,11 +1,7 @@
 <template>
-  <div ref="danmaku"
-       class="vue-danmaku"
-       @mouseenter="mouseIn"
-       @mouseleave="mouseOut">
+  <div ref="danmaku" class="vue-danmaku" @mouseenter="mouseIn" @mouseleave="mouseOut">
     <slot></slot>
-    <div :class="['danmus', {'show': !hidden}, {'paused': paused}]"
-         ref="danmus"></div>
+    <div :class="['danmus', { show: !hidden }, { paused: paused }]" ref="danmus"></div>
   </div>
 </template>
 <script>
@@ -13,16 +9,16 @@
     props: {
       danmus: {
         type: Array,
-        required: true
+        required: true,
       },
       config: {
         type: Object,
         default: () => {
-          return {}
-        }
-      }
+          return {};
+        },
+      },
     },
-    data () {
+    data() {
       return {
         container: null,
         isActive: false,
@@ -33,184 +29,189 @@
           danmus: [],
           width: 0, // danmaku宽度
           channels: 0, // 轨道数量
-          loop: false // 是否循环
+          loop: false, // 是否循环
         },
         danmu: {
           height: 40,
           fontSize: 18,
-          speed: 5
+          speed: 5,
         },
         hidden: false,
         paused: false,
         index: 0,
         continue: true,
-        danChannel: {}
-      }
+        danChannel: {},
+      };
     },
     computed: {},
     watch: {},
-    created () { },
-    mounted () {
+    created() {},
+    mounted() {
       this.$nextTick(() => {
-        this.init()
-        this.$emit('inited')
-      })
+        this.init();
+        this.$emit('inited');
+      });
     },
     methods: {
-      init () {
-        this.initCore()
-        this.initConfig()
+      init() {
+        this.initCore();
+        this.initConfig();
       },
-      reset () {
-        this.initConfig()
+      reset() {
+        this.initConfig();
       },
-      mouseIn () {
-        this.$emit('mouseIn')
+      mouseIn() {
+        this.$emit('mouseIn');
       },
-      mouseOut () {
-        this.$emit('mouseOut')
+      mouseOut() {
+        this.$emit('mouseOut');
       },
-      initCore () {
-        this.$danmaku = this.$refs.danmaku
-        this.$danmus = this.$refs.danmus
+      initCore() {
+        this.$danmaku = this.$refs.danmaku;
+        this.$danmus = this.$refs.danmus;
       },
-      initConfig () {
-        this.danmaku.width = this.$danmaku.offsetWidth
-        this.danmaku.height = this.$danmaku.offsetHeight
-        this.danmaku.danmus = this.danmus
-        this.danmaku.channels = this.config.channels || parseInt(this.danmaku.height / this.danmu.height)
-        this.danmaku.loop = this.config.loop || this.danmaku.loop
-        this.danmu.speed = this.config.speed || this.danmu.speed
-        this.danmu.fontSize = this.config.fontSize || this.danmu.fontSize
+      initConfig() {
+        this.danmaku.width = this.$danmaku.offsetWidth;
+        this.danmaku.height = this.$danmaku.offsetHeight;
+        this.danmaku.danmus = this.danmus;
+        this.danmaku.channels =
+          this.config.channels || parseInt(this.danmaku.height / this.danmu.height, 10);
+        this.danmaku.loop = this.config.loop || this.danmaku.loop;
+        this.danmu.speed = this.config.speed || this.danmu.speed;
+        this.danmu.fontSize = this.config.fontSize || this.danmu.fontSize;
       },
-      play () {
+      play() {
         if (this.paused) {
-          this.paused = false
-          return
+          this.paused = false;
+          return;
         }
         if (!this.timer) {
-          this.draw()
+          this.draw();
         }
       },
-      draw () {
+      draw() {
         this.$nextTick(() => {
           this.timer = setInterval(() => {
             if (this.index > this.danmus.length - 1) {
-              this.config.loop ? this.insert() : this.clear()
+              this.config.loop ? this.insert() : this.clear();
             } else {
-              this.insert()
+              this.insert();
             }
-          }, 2500)
-        })
+          }, 2500);
+        });
       },
-      insert () {
-        const index = this.config.loop ? this.index % this.danmus.length : this.index
-        const el = document.createElement(`div`)
+      insert() {
+        const index = this.config.loop ? this.index % this.danmus.length : this.index;
+        const el = document.createElement(`div`);
         if (this.continue) {
-          el.classList.add(`dm`)
-          el.classList.add(`move`)
-          el.style.animationName = "danmaku-fake";
-          el.style.animationDuration = `${this.danmu.speed}s`
-          el.style.fontSize = `${this.danmu.fontSize}px`
-          el.innerHTML = this.danmus[index]
-          el.setAttribute('index', this.index)
-          this.$danmus.appendChild(el)
-          setTimeout(()=>{
-            el.style.animationName = "danmaku";
-          },500)
-
+          el.classList.add(`dm`);
+          el.classList.add(`move`);
+          el.style.animationName = 'danmaku-fake';
+          el.style.animationDuration = `${this.danmu.speed}s`;
+          el.style.fontSize = `${this.danmu.fontSize}px`;
+          el.innerHTML = this.danmus[index];
+          el.setAttribute('index', this.index);
+          this.$danmus.appendChild(el);
+          setTimeout(() => {
+            el.style.animationName = 'danmaku';
+          }, 500);
         }
         this.$nextTick(() => {
-          let channelIndex = this.getChannel(el)
+          const channelIndex = this.getChannel(el);
           if (channelIndex >= 0) {
-            this.continue = true
-            const width = el.offsetWidth
-            const height = this.danmu.height > this.danmu.fontSize ? this.danmu.height : this.danmu.fontSize + 4
-            el.style.top = channelIndex * height + 'px'
-            el.style.width = width + 1 + 'px'
-            el.style.transform = `translateX(-${this.danmaku.width}px)`
+            this.continue = true;
+            const width = el.offsetWidth;
+            const height =
+              this.danmu.height > this.danmu.fontSize ? this.danmu.height : this.danmu.fontSize + 4;
+            el.style.top = `${channelIndex * height}px`;
+            el.style.width = `${width + 1}px`;
+            el.style.transform = `translateX(-${this.danmaku.width}px)`;
             el.addEventListener('animationend', () => {
-              this.$danmus.removeChild(el)
-            })
+              this.$danmus.removeChild(el);
+            });
             if (el.classList.length > 0) {
-              this.index++
+              this.index++;
             }
-          } else {
-            if (el.classList.length > 0) {
-              this.$danmus.removeChild(el)
-            }
+          } else if (el.classList.length > 0) {
+            this.$danmus.removeChild(el);
           }
-        })
+        });
       },
-      getChannel (el) {
-        const tmp = this.$danmus.offsetWidth / ((this.$danmus.offsetWidth + el.offsetWidth) / 6)
+      getChannel(el) {
+        const tmp = this.$danmus.offsetWidth / ((this.$danmus.offsetWidth + el.offsetWidth) / 6);
         for (let i = 0; i < this.danmaku.channels; i++) {
-          const items = this.danChannel[i + '']
+          const items = this.danChannel[`${i}`];
           if (items && items.length) {
             for (let j = 0; j < items.length; j++) {
-              const danRight = this.getDanRight(items[j]) - 10
-              if (danRight <= this.$danmus.offsetWidth - tmp * ((this.$danmus.offsetWidth + parseInt(items[j].offsetWidth)) / 6) || danRight <= 0) {
-                break
+              const danRight = this.getDanRight(items[j]) - 10;
+              if (
+                danRight <=
+                this.$danmus.offsetWidth -
+                tmp * ((this.$danmus.offsetWidth + parseInt(items[j].offsetWidth, 10)) / 6) ||
+                danRight <= 0
+              ) {
+                break;
               }
               if (j === items.length - 1) {
-                this.danChannel[i + ''].push(el)
+                this.danChannel[`${i}`].push(el);
                 el.addEventListener('animationend', () => {
-                  this.danChannel[i + ''].splice(0, 1)
-                })
-                return i % this.danmaku.channels
+                  this.danChannel[`${i}`].splice(0, 1);
+                });
+                return i % this.danmaku.channels;
               }
             }
           } else {
-            this.danChannel[i + ''] = [el]
+            this.danChannel[`${i}`] = [el];
             el.addEventListener('animationend', () => {
-              this.danChannel[i + ''].splice(0, 1)
-            })
-            return i % this.danmaku.channels
+              this.danChannel[`${i}`].splice(0, 1);
+            });
+            return i % this.danmaku.channels;
           }
         }
-        return -1
+        return -1;
       },
       // 弹幕到右侧的距离
-      getDanRight (el) {
-        const eleWidth = el.offsetWidth || parseInt(el.style.width)
-        const eleRight = el.getBoundingClientRect().right || this.$danmus.getBoundingClientRect().right + eleWidth
-        return this.$danmus.getBoundingClientRect().right - eleRight
+      getDanRight(el) {
+        const eleWidth = el.offsetWidth || parseInt(el.style.width, 10);
+        const eleRight =
+          el.getBoundingClientRect().right || this.$danmus.getBoundingClientRect().right + eleWidth;
+        return this.$danmus.getBoundingClientRect().right - eleRight;
       },
       // 添加弹幕
-      add (danmu) {
-        const index = this.index % this.danmaku.danmus.length
-        this.danmaku.danmus.splice(index, 0, danmu)
+      add(danmu) {
+        const index = this.index % this.danmaku.danmus.length;
+        this.danmaku.danmus.splice(index, 0, danmu);
       },
-      pause () {
-        this.paused = true
+      pause() {
+        this.paused = true;
       },
-      stop () {
-        this.danChannel = {}
-        this.$refs.danmus.innerHTML = ''
-        this.paused = false
-        this.hidden = false
-        this.clear()
+      stop() {
+        this.danChannel = {};
+        this.$refs.danmus.innerHTML = '';
+        this.paused = false;
+        this.hidden = false;
+        this.clear();
       },
-      clear () {
-        clearInterval(this.timer)
-        this.timer = null
-        this.index = 0
+      clear() {
+        clearInterval(this.timer);
+        this.timer = null;
+        this.index = 0;
       },
-      show () {
-        this.hidden = false
+      show() {
+        this.hidden = false;
       },
-      hide () {
-        this.hidden = true
+      hide() {
+        this.hidden = true;
       },
-      resize () {
-        this.initConfig()
-        const items = this.$danmaku.getElementsByClassName('dm')
+      resize() {
+        this.initConfig();
+        const items = this.$danmaku.getElementsByClassName('dm');
         for (let i = 0; i < items.length; i++) {
-          items[i].style.transform = `translateX(-${this.danmaku.width}px)`
+          items[i].style.transform = `translateX(-${this.danmaku.width}px)`;
         }
-      }
-    }
-  }
+      },
+    },
+  };
 </script>
 <style lang="less">
   .vue-danmaku {

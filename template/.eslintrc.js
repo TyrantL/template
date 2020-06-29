@@ -19,6 +19,9 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'arrow-parens': ['error', 'as-needed'],
     'no-tabs': ['error', { allowIndentationTabs: true }],
+    'no-unused-expressions':  ['error', { 'allowTernary': true, 'allowShortCircuit': true }],
+    'no-plusplus': 'off',
+    'func-names': 'off',
   },
   globals: {
     dsBridge: true,

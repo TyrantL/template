@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import { Toast } from 'vant';
+import { Toast, Popup, Grid, GridItem } from 'vant';
 
-[Toast].forEach(plugin => {
+[Toast, Popup, Grid, GridItem].forEach(plugin => {
   Vue.use(plugin);
 });
