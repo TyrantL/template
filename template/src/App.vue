@@ -3,9 +3,7 @@
     <router-view />
   </div>
 </template>
-<script>
-
-</script>
+<script></script>
 <style lang="less">
 body{
   margin: 0;
