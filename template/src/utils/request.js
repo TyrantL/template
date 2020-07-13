@@ -20,7 +20,8 @@ if (domain.match('devh5') || domain.match('192') || domain.match('localhost')) {
 let token = '';
 if (isInApp) {
   token =
-    dsBridge.call('getStorage', { key: 'token' }, () => {}) || window.localStorage.getItem('token');
+    dsBridge.call('getStorage', { key: 'token' }, () => {}) ||
+    window.localStorage.getItem('token');
 } else {
   token = window.localStorage.getItem('token');
 }
@@ -100,18 +101,18 @@ function responceIntercptor(_axios) {
   );
 }
 
+const request = create({
+  baseURL: baseUrl,
+  // `timeout` 指定请求超时的毫秒数(0 表示无超时时间)
+  // 如果请求话费了超过 `timeout` 的时间，请求将被中断
+  timeout: 10000,
+  // `withCredentials` 表示跨域请求时是否需要使用凭证
+  withCredentials: true, // 默认的false, true:让ajax携带cookie
+});
+
+setHeaders(request);
+requestIntercptor(request);
+responceIntercptor(request);
+
 // eslint-disable-next-line import/prefer-default-export
-export const request = () => {
-  const re = create({
-    baseURL: baseUrl,
-    // `timeout` 指定请求超时的毫秒数(0 表示无超时时间)
-    // 如果请求话费了超过 `timeout` 的时间，请求将被中断
-    timeout: 10000,
-    // `withCredentials` 表示跨域请求时是否需要使用凭证
-    withCredentials: true, // 默认的false, true:让ajax携带cookie
-  });
-  setHeaders(re);
-  requestIntercptor(re);
-  responceIntercptor(re);
-  return re;
-};
+export { request };

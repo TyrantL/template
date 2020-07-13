@@ -11,6 +11,15 @@ module.exports = {
 
   productionSourceMap: false,
 
+  pages: {
+    index: 'src/main.js',
+    kuaizhan: {
+      entry: 'src/main.js',
+      template: 'public/kuaizhan.html',
+      filename: 'kuaizhan.html',
+    },
+  },
+
   css: {
     extract: false,
     loaderOptions: {
